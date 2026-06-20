@@ -30,7 +30,7 @@ async function fetchAllRepoDates() {
                 const options = { year: 'numeric', month: 'long', day: 'numeric' };
                 const formattedDate = lastPush.toLocaleDateString('en-US', options);
 
-                element.innerText = `Last updated: ${formattedDate}`;
+                element.innerText = `Last Updated: ${formattedDate}`;
             } else {
                 element.innerText = 'Repository not found';
             }
