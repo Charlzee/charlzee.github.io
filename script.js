@@ -1,34 +1,47 @@
 const username = 'charlzee';
 
 async function fetchAllRepoDates() {
-    // Find all elements on the page that need a repo date
+    // Find all elements that need repo date
     const repoElements = document.querySelectorAll('.repo-update-time');
+    
+    if (repoElements.length === 0) return;
 
-    // Loop through each element
-    for (const element of repoElements) {
-        const repoName = element.getAttribute('repo-name'); 
+    try {
+        const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
         
-        try {
-            // Fetch data for the repository
-            const response = await fetch(`https://api.github.com/repos/${username}/${repoName}`);
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${repoName}`);
-            }
-
-            const data = await response.json();
-            const lastPush = new Date(data.pushed_at);
-
-            // Format the date
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const formattedDate = lastPush.toLocaleDateString('en-US', options);
-
-            element.innerText = `Last updated: ${formattedDate}`;
-
-        } catch (error) {
-            console.error(`Error fetching data for ${repoName}:`, error);
-            element.innerText = 'Date unavailable';
+        if (!response.ok) {
+            throw new Error('Failed to fetch repository list from GitHub');
         }
+
+        const reposData = await response.json();
+
+        repoElements.forEach(element => {
+            const repoName = element.getAttribute('repo-name');
+            
+            // Find the repository in the API array
+            const matchedRepo = reposData.find(
+                repo => repo.name.toLowerCase() === repoName.toLowerCase()
+            );
+
+            if (matchedRepo) {
+                const lastPush = new Date(matchedRepo.pushed_at);
+
+                // Format the date
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = lastPush.toLocaleDateString('en-US', options);
+
+                element.innerText = `Last updated: ${formattedDate}`;
+            } else {
+                element.innerText = 'Repository not found';
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching bulk repo data:', error);
+        // Fallback text for all elements if the API call fails
+        repoElements.forEach(element => {
+            element.innerText = 'Date unavailable';
+        });
     }
 }
 
