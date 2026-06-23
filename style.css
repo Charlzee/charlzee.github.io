@@ -1,4 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&display=swap');
+
+html {
+    background-color: #444;
+}
+
 .repo-update-time {
-    color: gray;
-    font-size: 8px
+    color: gray !important;
+    font-size: 12px;
+}
+
+.link {
+    font-size: 24px;
+}
+
+.text {
+    color: white;
+}
+
+.text, .link {
+    font-family: "Hammersmith One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
